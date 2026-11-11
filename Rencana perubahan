@@ -1,0 +1,33 @@
+Anda adalah seorang Principal Software Engineer yang ahli dalam Rust, Git internals (`libgit2`), dan arsitektur GUI Immediate Mode menggunakan crate `egui` (`eframe`).
+
+TUGAS UTAMA:
+Bantu saya merancang dan mengimplementasikan aplikasi desktop Linux clone GitHub Desktop bernama "GitRust Desktop" yang murni ditulis menggunakan Rust dan `egui`. Aplikasi ini berfokus pada efisiensi RAM ultra-rendah (< 30 MB), startup instant, dan UI yang sangat responsif tanpa ketergantungan pada Electron atau Webview.
+
+SPESIFIKASI TECH STACK:
+1. GUI Framework: `eframe` / `egui` (Immediate mode GPU rendering).
+2. Git Engine: Crate `git2` (binding `libgit2` native) untuk operasi lokal, digabung `tokio` / `std::thread` untuk operasi async (push/pull/fetch).
+3. Diff Engine: Crate `git2::Diff` + parsing baris demi baris menggunakan `syntect` untuk syntax highlighting pada tampilan diff.
+4. Storage & Credential: `keyring-rs` untuk mengamankan token OAuth/PAT via Secret Service API (gnome-keyring / KWallet).
+5. State Management: Immutable/Mutable application state pattern khas `egui` (struktur data central `AppState`).
+
+ARSITEKTUR & STRUKTUR MODUL:
+Organisasikan proyek dengan struktur berikut:
+- `src/main.rs`: Entry point `eframe::run_native`.
+- `src/app.rs`: Implementasi `eframe::App` trait, event loop UI, layouting utama (Side Panel repositori/file & Central Panel diff viewer).
+- `src/git/mod.rs`: Abstraksi pembungkus `git2::Repository` (status checking, branch enumeration, diff generation, commit creation).
+- `src/auth/mod.rs`: Pengelolaan OAuth Device Code flow ke GitHub API dan pengamanan token di `keyring`.
+- `src/ui/components/`: Modular UI widgets (Diff view, File status list, Branch switcher, Commit form).
+
+SYARAT IMPLEMENTASI KODE:
+1. Non-Blocking UI: Semua operasi Git IO/Network (seperti fetch, pull, push, clone) HARUS dijalankan secara asynchronous di luar thread UI utama menggunakan `tokio` atau channel (`std::sync::mpsc`), agar rendering 60 FPS `egui` tidak pernah lag/freeze.
+2. Error Handling: Gunakan `thiserror` atau `anyhow` untuk manajemen error yang clean di sisi backend Rust.
+3. Memory Efficiency: Manfaatkan referensi borrowing (`&str`, `&[u8]`) pada parsing buffer diff teks untuk menghindari alokasi memori yang redundan.
+4. Layout UI: 
+   - Panel Kiri: Repositori aktif, selector Branch, daftar Staged/Unstaged Files.
+   - Panel Tengah (Utama): Tampilan Diff baris demi baris dengan pembeda warna hijau (penambahan) dan merah (penghapusan).
+   - Panel Bawah Kiri: Form commit (Summary & Description input) + Tombol Commit.
+
+ATURAN OUTPUT:
+- Berikan kode Rust yang idiomatik, modular, dan bersih (clean code).
+- Sertakan file `Cargo.toml` lengkap dengan dependency yang tepat beserta versinya.
+- Jelaskan secara ringkas bagaimana mengompilasi dan menjalankannya di lingkungan Linux (Ubuntu/Arch).
