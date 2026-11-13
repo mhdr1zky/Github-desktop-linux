@@ -1,5 +1,8 @@
 # [GitHub Desktop](https://desktop.github.com) - The Linux Fork
 
+Native Rust + egui preview: see [native/README.md](native/README.md) for build
+instructions and [plan.md](plan.md) for the migration roadmap.
+
 [![CI](https://github.com/shiftkey/desktop/actions/workflows/ci.yml/badge.svg)](https://github.com/shiftkey/desktop/actions/workflows/ci.yml)
 
 [GitHub Desktop](https://desktop.github.com/) is an open-source [Electron](https://www.electronjs.org/)-based
